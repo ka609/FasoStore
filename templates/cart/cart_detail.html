@@ -1,0 +1,86 @@
+{% extends 'base/base.html' %}
+{% block title %}Mon panier - FasoStore{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">
+    <i class="fas fa-shopping-cart"></i> Mon panier
+</h1>
+
+{% if cart.items.items %}
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <table class="table align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Article</th>
+                    <th>Prix</th>
+                    <th>Quantité</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart.items.items %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="{{ item.image }}" width="60" class="rounded me-3">
+                            <strong>{{ item.name }}</strong>
+                        </div>
+                    </td>
+                    <td>{{ item.price }} FCFA</td>
+                    <td>{{ item.quantity }}</td>
+                    <td class="fw-bold">{{ item.price|floatformat:0|add:""|add:item.quantity }} FCFA</td>
+                    <td>
+                        <form method="post" action="{% url 'cart_update' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="remove_id" value="{{ item.id }}">
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-end">
+            <h4>Total : <span class="text-primary">{{ cart.items.total }} FCFA</span></h4>
+        </div>
+
+    </div>
+</div>
+
+<div class="mt-4 d-flex justify-content-between">
+    <a href="{% url 'article_list' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Continuer les achats
+    </a>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'create_order' %}" class="btn btn-success btn-lg">
+            <i class="fas fa-check"></i> Passer la commande
+        </a>
+    {% else %}
+        <div>
+            <p class="text-danger mb-2">
+                <i class="fas fa-lock"></i> Connectez-vous pour commander
+            </p>
+            <a href="{% url 'login' %}" class="btn btn-primary me-2">
+                Connexion
+            </a>
+            <a href="{% url 'register' %}" class="btn btn-outline-primary">
+                Inscription
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% else %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> Votre panier est vide.
+</div>
+{% endif %}
+
+{% endblock %}

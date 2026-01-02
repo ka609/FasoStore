@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Recherche | FasoStore{% endblock %}
+
+{% block content %}
+<h2>Résultats pour "{{ query }}"</h2>
+
+<div class="row g-4">
+    {% for article in articles %}
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm">
+            {% if article.images.first %}
+            <img src="{{ article.images.first.image.url }}" class="card-img-top" alt="{{ article.name }}">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ article.name }}</h5>
+                <p class="card-text text-truncate">{{ article.description|truncatechars:80 }}</p>
+                <p class="fw-bold text-warning">{{ article.price|floatformat:0 }} FCFA</p>
+                <a href="{% url 'article_detail' article.pk %}" class="btn btn-outline-primary mt-auto">Voir détails</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Aucun résultat trouvé.</p>
+    {% endfor %}
+</div>
+{% endblock %}

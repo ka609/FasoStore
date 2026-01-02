@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% block title %}Mon profil{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">
+    <i class="fas fa-user"></i> Mon profil
+</h2>
+
+<div class="row">
+
+    <!-- Infos compte -->
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header fw-bold">
+                Informations du compte
+            </div>
+            <div class="card-body">
+                <p><strong>Nom :</strong> {{ request.user.get_full_name|default:"—" }}</p>
+                <p><strong>Email :</strong> {{ request.user.email }}</p>
+                <p><strong>Date d'inscription :</strong> {{ request.user.date_joined|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profil -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">
+                Informations personnelles
+            </div>
+            <div class="card-body">
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <div class="mb-3">
+                        {{ form.phone.label_tag }}
+                        {{ form.phone }}
+                    </div>
+
+                    <button class="btn btn-primary w-100">
+                        <i class="fas fa-save"></i> Mettre à jour
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

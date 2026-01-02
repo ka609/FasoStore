@@ -1,0 +1,39 @@
+{% extends "base/base.html" %}
+
+{% block title %}Coupons | FasoStore{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🎟️ Coupons disponibles</h2>
+
+<div class="row">
+    {% for coupon in coupons %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-success">
+            <div class="card-body text-center">
+                <h5 class="card-title text-success">{{ coupon.code }}</h5>
+
+                <p class="fs-4 fw-bold">
+                    -{{ coupon.discount }} FCFA
+                </p>
+
+                {% if coupon.valid_from or coupon.valid_to %}
+                <p class="text-muted small">
+                    Valide
+                    {% if coupon.valid_from %} du {{ coupon.valid_from|date:"d/m/Y" }}{% endif %}
+                    {% if coupon.valid_to %} au {{ coupon.valid_to|date:"d/m/Y" }}{% endif %}
+                </p>
+                {% endif %}
+
+                {% if coupon.is_active %}
+                    <span class="badge bg-success">Actif</span>
+                {% else %}
+                    <span class="badge bg-secondary">Inactif</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Aucun coupon disponible pour le moment.</p>
+    {% endfor %}
+</div>
+{% endblock %}

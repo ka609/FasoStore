@@ -1,0 +1,104 @@
+.product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.15);
+}
+
+.navbar {
+    background-color: #f1f3f5; /* gris clair élégant */
+}
+
+.icon-btn {
+    position: relative;
+    color: #495057;
+    font-size: 1.2rem;
+}
+
+.icon-btn:hover {
+    color: #000;
+}
+
+.icon-btn .badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    font-size: 0.65rem;
+}
+.box_main {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+}
+
+.box_main:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.shirt_text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 5px;
+}
+
+.price_text {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+.price_text span {
+    color: #f26522;
+    font-weight: bold;
+}
+
+.tshirt_img {
+    height: 230px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.tshirt_img img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.btn_main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buy_bt i {
+    background: #f26522;
+    color: #fff;
+    padding: 12px;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+.buy_bt i:hover {
+    background: #222;
+}
+
+.seemore_bt a {
+    background: #222;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.seemore_bt a:hover {
+    background: #f26522;
+}

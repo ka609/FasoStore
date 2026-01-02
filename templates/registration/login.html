@@ -1,0 +1,83 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+
+        <div class="card shadow-sm mt-5">
+            <div class="card-body">
+
+                <h3 class="text-center mb-4 fw-bold">
+                    Connexion
+                </h3>
+
+                {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        Nom d’utilisateur ou mot de passe incorrect.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endif %}
+
+                <!-- FORMULAIRE LOGIN -->
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="fas fa-user"></i> Nom d’utilisateur
+                        </label>
+                        <input
+                            type="text"
+                            name="{{ form.username.name }}"
+                            id="{{ form.username.id_for_label }}"
+                            class="form-control"
+                            value="{{ form.username.value|default:'' }}"
+                            placeholder="Entrez votre nom d’utilisateur"
+                            required
+                        >
+                        {{ form.username.errors }}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            <i class="fas fa-lock"></i> Mot de passe
+                        </label>
+                        <input
+                            type="password"
+                            name="{{ form.password.name }}"
+                            id="{{ form.password.id_for_label }}"
+                            class="form-control"
+                            placeholder="Entrez votre mot de passe"
+                            required
+                        >
+                        {{ form.password.errors }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        Se connecter
+                    </button>
+                </form>
+
+                <div class="text-center mb-3">
+                    <a href="{% url 'password_reset' %}">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
+
+                <div class="text-center">
+                    <span>Pas encore de compte ? </span>
+                    <a href="{% url 'register' %}" class="fw-bold text-success">
+                        Créez-en un
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

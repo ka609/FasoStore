@@ -1,0 +1,16 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Notification | FasoStore{% endblock %}
+
+{% block content %}
+<h2>Notification</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">{{ notification.type|default:"Notification" }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ notification.created_at|date:"d/m/Y H:i" }}</h6>
+        <p class="card-text">{{ notification.message }}</p>
+        <a href="{% url 'notifications' %}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+</div>
+{% endblock %}

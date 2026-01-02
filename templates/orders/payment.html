@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Paiement | FasoStore{% endblock %}
+
+{% block content %}
+<h2>Paiement</h2>
+
+<div class="row">
+
+    <!-- COLONNE GAUCHE : Formulaire de paiement -->
+    <div class="col-md-6">
+        <div class="card shadow-sm p-3 mb-4">
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Méthode de paiement -->
+                <div class="mb-3">
+                    <label for="method" class="form-label">Méthode de paiement</label>
+                    <select name="method" id="method" class="form-select" required>
+                        <option value="momo">Mobile Money</option>
+                        <option value="card">Carte bancaire</option>
+                        <option value="cash">Paiement à la livraison</option>
+                    </select>
+                </div>
+
+                <!-- Montant à payer -->
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Montant à payer (FCFA)</label>
+                    <input type="text" id="amount" class="form-control" value="{{ order.total|floatformat:0 }}" readonly>
+                </div>
+
+                <button type="submit" class="btn btn-warning w-100">
+                    Payer maintenant
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- COLONNE DROITE : Résumé de la commande -->
+    <div class="col-md-6">
+        <h5>Détails de la commande</h5>
+        <ul class="list-group mb-3">
+            {% for key, item in order.items.items %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ item.name }} x {{ item.quantity }}
+                <span>{{ item.total_price|floatformat:0 }} FCFA</span>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <p class="mb-1">Sous-total : <strong>{{ order.subtotal|floatformat:0 }} FCFA</strong></p>
+        <p class="mb-1">Frais de livraison : <strong>{{ order.delivery_fee|floatformat:0 }} FCFA</strong></p>
+        <p class="fw-bold">Total : <strong>{{ order.total|floatformat:0 }} FCFA</strong></p>
+    </div>
+
+</div>
+{% endblock %}

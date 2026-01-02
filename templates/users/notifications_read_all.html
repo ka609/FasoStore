@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Marquer toutes comme lues | FasoStore{% endblock %}
+
+{% block content %}
+<h2>Marquer toutes les notifications comme lues</h2>
+
+<p>Voulez-vous vraiment marquer toutes vos notifications comme lues ?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-warning">Oui, marquer toutes comme lues</button>
+    <a href="{% url 'notifications' %}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}

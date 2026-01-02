@@ -1,0 +1,48 @@
+{% extends 'base/base.html' %}
+{% block title %}Dashboard - FasoStore{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Bonjour {{ user.username }}</h1>
+
+    <div class="row g-4">
+
+        <!-- Mes commandes -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm p-3 h-100">
+                <i class="fas fa-shopping-bag fa-2x mb-2 text-primary"></i>
+                <h5 class="card-title">Mes commandes</h5>
+                <p class="card-text">{{ user.orders.count }} commandes</p>
+                <a href="{% url 'order_list' %}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-eye"></i> Voir
+                </a>
+            </div>
+        </div>
+
+        <!-- Mes adresses -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm p-3 h-100">
+                <i class="fas fa-map-marker-alt fa-2x mb-2 text-warning"></i>
+                <h5 class="card-title">Mes adresses</h5>
+                <p class="card-text">{{ user.addresses.count }} adresses</p>
+                <a href="{% url 'addresses' %}" class="btn btn-outline-warning btn-sm">
+                    <i class="fas fa-eye"></i> Voir
+                </a>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm p-3 h-100">
+                <i class="fas fa-bell fa-2x mb-2 text-danger"></i>
+                <h5 class="card-title">Notifications</h5>
+                <p class="card-text">{{ unread_count }} non lues</p>
+                <a href="{% url 'list' %}" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-eye"></i> Voir
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

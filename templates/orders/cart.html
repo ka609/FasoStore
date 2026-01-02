@@ -1,0 +1,53 @@
+{% extends "base/base.html" %}
+
+{% block title %}Panier | FasoStore{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🛒 Mon panier</h2>
+
+{% if articles %}
+<table class="table table-bordered align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Article</th>
+            <th>Prix</th>
+            <th>Quantité</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in articles %}
+        <tr>
+            <td>{{ item.article.name }}</td>
+            <td>{{ item.price }} FCFA</td>
+            <td>
+                <form method="post" action="{% url 'update_cart_qty' item.article.id %}">
+                    {% csrf_token %}
+                    <input type="number" name="qty" value="{{ item.qty }}" min="1" class="form-control form-control-sm w-50">
+                    <button class="btn btn-sm btn-warning mt-1">Mettre à jour</button>
+                </form>
+            </td>
+            <td>{{ item.total }} FCFA</td>
+            <td>
+                <a href="{% url 'remove_from_cart' item.article.id %}" class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="text-end">
+    <h4>Total : <strong>{{ subtotal }} FCFA</strong></h4>
+    <a href="{% url 'checkout' %}" class="btn btn-success mt-2">
+        Passer à la commande
+    </a>
+</div>
+
+{% else %}
+<p>Votre panier est vide.</p>
+<a href="{% url 'article_list' %}" class="btn btn-warning">Voir la boutique</a>
+{% endif %}
+{% endblock %}

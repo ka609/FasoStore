@@ -1,0 +1,36 @@
+{% extends "base/base.html" %}
+
+{% block title %}Supprimer article{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 text-center">
+
+            <div class="card shadow p-4">
+                <h4 class="text-danger mb-3">
+                    <i class="fas fa-trash"></i> Retirer l’article
+                </h4>
+
+                <p>
+                    Voulez-vous vraiment retirer
+                    <strong>{{ article.name }}</strong> du panier ?
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <a href="{% url 'cart' %}" class="btn btn-secondary">
+                            Annuler
+                        </a>
+                        <button class="btn btn-danger">
+                            Supprimer
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

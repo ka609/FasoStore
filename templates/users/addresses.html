@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Mes Adresses | FasoStore{% endblock %}
+
+{% block content %}
+<h2>Mes adresses</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-warning">Ajouter</button>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    {% for address in addresses %}
+    <div class="col-md-4">
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <p>{{ address.address }}, {{ address.city }}, {{ address.country }}</p>
+                {% if address.is_default %}<span class="badge bg-success">Par défaut</span>{% endif %}
+                <div class="mt-2">
+                    <a href="{% url 'address_edit' address.pk %}" class="btn btn-sm btn-primary">Modifier</a>
+                    <a href="{% url 'address_delete' address.pk %}" class="btn btn-sm btn-danger">Supprimer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Aucune adresse enregistrée.</p>
+    {% endfor %}
+</div>
+{% endblock %}

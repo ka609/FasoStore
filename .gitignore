@@ -1,0 +1,25 @@
+# Environnement virtuel
+env/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Django
+*.log
+db.sqlite3
+media/
+
+# Fichiers secrets
+.env
+
+# Static collecté
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

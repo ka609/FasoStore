@@ -1,0 +1,89 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Boutique | FasoStore{% endblock %}
+{% block content %}
+<h2 class="mb-4">Nos produits</h2>
+
+<!-- Filtre par catégorie -->
+<div class="mb-4">
+    <form method="get" class="d-flex gap-2 flex-wrap">
+        <select name="category" class="form-select w-auto">
+            <option value="">Toutes catégories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="min" class="form-control w-auto" placeholder="Min" value="{{ request.GET.min }}">
+        <input type="number" name="max" class="form-control w-auto" placeholder="Max" value="{{ request.GET.max }}">
+        <button class="btn btn-warning">Filtrer</button>
+    </form>
+</div>
+
+<!-- Liste des articles -->
+<div class="row g-4">
+    {% for article in articles %}
+    <div class="col-lg-4 col-sm-6">
+        <div class="box_main h-100">
+
+            <!-- Titre -->
+            <h4 class="shirt_text">{{ article.name }}</h4>
+
+            <!-- Prix -->
+            <p class="price_text">
+                Prix :
+                <span>{{ article.price|floatformat:0 }} FCFA</span>
+            </p>
+
+            <!-- Image -->
+            <div class="tshirt_img">
+                {% if article.images.first %}
+                <img src="{{ article.images.first.image.url }}" alt="{{ article.name }}">
+                {% else %}
+                <img src="{% static 'images/no-image.png' %}" alt="Image non disponible">
+                {% endif %}
+            </div>
+
+            <!-- Boutons -->
+            <div class="btn_main">
+                <div class="buy_bt">
+                    <a href="{% url 'add_to_cart' article.id %}">
+                        <i class="fa fa-cart-plus"></i>
+                    </a>
+                </div>
+                <div class="seemore_bt">
+                    <a href="{% url 'article_detail' article.pk %}">Voir</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center">Aucun article disponible</p>
+    {% endfor %}
+</div>
+<!-- Pagination -->
+{% if articles.has_other_pages %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if articles.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ articles.previous_page_number }}">Précédent</a>
+        </li>
+        {% endif %}
+        {% for num in articles.paginator.page_range %}
+            {% if articles.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if articles.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ articles.next_page_number }}">Suivant</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

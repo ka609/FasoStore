@@ -1,0 +1,120 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Accueil | FasoStore{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- 🛍️ LISTE DES ARTICLES -->
+    <div class="row g-4">
+        {% for article in page_obj %}
+        <div class="col-lg-4 col-md-6 col-sm-12">
+
+            <div class="box_main h-100">
+
+                <!-- TITRE -->
+                <h4 class="shirt_text">
+                    {{ article.name|truncatechars:35 }}
+                </h4>
+
+                <!-- PRIX -->
+                <p class="price_text">
+                    Prix :
+                    <span>{{ article.price|floatformat:0 }} FCFA</span>
+                </p>
+
+                <!-- IMAGE -->
+                <a href="{% url 'article_detail' article.id %}" class="text-decoration-none">
+                    <div class="tshirt_img">
+                        {% if article.images.first %}
+                            <img src="{{ article.images.first.image.url }}"
+                                 alt="{{ article.name }}">
+                        {% else %}
+                            <img src="{% static 'images/no-image.png' %}"
+                                 alt="Image non disponible">
+                        {% endif %}
+                    </div>
+                </a>
+
+                <!-- BOUTONS -->
+                <div class="btn_main">
+
+                    <!-- AJOUT PANIER -->
+                    <div class="buy_bt">
+                        {% if article.stock > 0 %}
+                        <form method="post" action="{% url 'add_to_cart' article.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="border-0 bg-transparent">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="text-danger small">Rupture</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- DETAILS -->
+                    <div class="seemore_bt">
+                        <a href="{% url 'article_detail' article.id %}">
+                            Voir
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted py-5">
+            <i class="fas fa-box-open fa-3x mb-3"></i>
+            <p>Aucun article disponible</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 📄 PAGINATION -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-5">
+        <ul class="pagination justify-content-center pagination-lg">
+
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                    &laquo;
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                    &raquo;
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+    {% endif %}
+
+</div>
+{% endblock %}

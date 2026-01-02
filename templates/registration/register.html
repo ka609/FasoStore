@@ -1,0 +1,106 @@
+{% extends 'base/base.html' %}
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header text-center fw-bold">
+                <i class="fas fa-user-plus"></i> Inscription
+            </div>
+            <div class="card-body">
+
+                <!-- Message d'erreur global -->
+                {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        Veuillez corriger les erreurs ci-dessous.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="fas fa-user"></i> Nom d’utilisateur
+                        </label>
+                        <input
+                            type="text"
+                            name="{{ form.username.name }}"
+                            id="{{ form.username.id_for_label }}"
+                            class="form-control"
+                            value="{{ form.username.value|default:'' }}"
+                            placeholder="Entrez votre nom d’utilisateur"
+                            required
+                        >
+                        {{ form.username.errors }}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input
+                            type="email"
+                            name="{{ form.email.name }}"
+                            id="{{ form.email.id_for_label }}"
+                            class="form-control"
+                            value="{{ form.email.value|default:'' }}"
+                            placeholder="Entrez votre email"
+                            required
+                        >
+                        {{ form.email.errors }}
+                    </div>
+
+                    <!-- Password1 -->
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">
+                            <i class="fas fa-lock"></i> Mot de passe
+                        </label>
+                        <input
+                            type="password"
+                            name="{{ form.password1.name }}"
+                            id="{{ form.password1.id_for_label }}"
+                            class="form-control"
+                            placeholder="Entrez un mot de passe"
+                            required
+                        >
+                        {{ form.password1.errors }}
+                    </div>
+
+                    <!-- Password2 -->
+                    <div class="mb-3">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">
+                            <i class="fas fa-lock"></i> Confirmez le mot de passe
+                        </label>
+                        <input
+                            type="password"
+                            name="{{ form.password2.name }}"
+                            id="{{ form.password2.id_for_label }}"
+                            class="form-control"
+                            placeholder="Confirmez le mot de passe"
+                            required
+                        >
+                        {{ form.password2.errors }}
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-success w-100 mb-3">
+                        <i class="fas fa-user-plus"></i> S’inscrire
+                    </button>
+                </form>
+
+                <!-- Lien vers login -->
+                <div class="text-center small">
+                    Déjà un compte ? <a href="{% url 'login' %}" class="fw-bold text-primary">Connectez-vous</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
