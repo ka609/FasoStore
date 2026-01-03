@@ -48,7 +48,7 @@ def article_list(request):
     if max_price:
         articles = articles.filter(price__lte=max_price)
 
-    return render(request, 'shop/list.html', {
+    return render(request, 'shop/article_list.html', {
         'articles': articles,
         'categories': categories,
     })
@@ -64,12 +64,21 @@ def article_detail(request, pk):
 
 def category_view(request, slug):
     category = get_object_or_404(Category, slug=slug, is_active=True)
-    articles = category.articles.filter(is_active=True)
+
+    articles_qs = category.articles.filter(is_active=True)
+
+    paginator = Paginator(articles_qs, 8)  # 8 articles par page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    categories = Category.objects.filter(is_active=True)
 
     return render(request, 'shop/category.html', {
         'category': category,
-        'articles': articles,
+        'page_obj': page_obj,
+        'categories': categories,
     })
+
 
 
 def search_view(request):
@@ -103,7 +112,7 @@ def coupon_list(request):
         Q(valid_to__gte=now) | Q(valid_to__isnull=True),
     )
 
-    return render(request, 'shop/coupons.html', {
+    return render(request, 'shop/coupon.html', {
         'coupons': coupons,
     })
 

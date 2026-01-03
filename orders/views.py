@@ -6,7 +6,7 @@ from decimal import Decimal
 from django.db.models import Q
 
 
-from .models import Order, Delivery, Payment, Cart
+from .models import Order, Payment, Cart,OrderItem
 from shop.models import Article, Coupon
 from users.models import Address
 
@@ -22,10 +22,16 @@ def calculate_cart_totals(cart_items):
         subtotal += Decimal(item['price']) * item['qty']
     return subtotal
 
+
+#def calculate_cart_totals(items):
+   # subtotal = Decimal('0')
+   # for item in items.values():
+      #  subtotal += Decimal(item['price']) * int(item['quantity'])
+    #return subtotal
+
 @login_required
 def checkout_view(request):
     cart = get_object_or_404(Cart, user=request.user)
-    deliveries = Delivery.objects.filter(is_active=True)
     addresses = request.user.addresses.all()
 
     if not cart.items:
@@ -33,20 +39,33 @@ def checkout_view(request):
         return redirect('article_list')
 
     subtotal = calculate_cart_totals(cart.items)
-    delivery_fee = Decimal('0')
     discount = Decimal('0')
-    total = None
-    cart_items = list(cart.items.values())  # Pour le template
+    delivery_fee = Decimal('0')  # client ne choisit pas la livraison
+    total = subtotal  # initial
+
+    cart_items = []
+
+    for article_id, item in cart.items.items():
+        article = get_object_or_404(Article, id=article_id)
+
+        quantity = int(item.get('qty', 1))
+        price = Decimal(item['price'])
+
+        cart_items.append({
+            'id': article.id,
+            'name': article.name,  # ou article.name selon ton modèle
+            'price': price,
+            'quantity': quantity,
+            'total_price': price * quantity
+        })
 
     if request.method == 'POST':
         address_id = request.POST.get('address')
-        delivery_id = request.POST.get('delivery')
         coupon_code = request.POST.get('coupon')
 
         address = get_object_or_404(Address, id=address_id, user=request.user)
-        delivery = get_object_or_404(Delivery, id=delivery_id, is_active=True)
 
-        # 🎟️ Gestion du coupon
+        # Gestion coupon
         if coupon_code:
             now = timezone.now()
             coupon_obj = Coupon.objects.filter(
@@ -56,35 +75,41 @@ def checkout_view(request):
                 Q(valid_from__lte=now) | Q(valid_from__isnull=True),
                 Q(valid_to__gte=now) | Q(valid_to__isnull=True),
             ).first()
-
             if coupon_obj:
                 discount = coupon_obj.discount
             else:
                 messages.error(request, "Coupon invalide")
 
-        delivery_fee = delivery.price
         total = subtotal + delivery_fee - discount
 
-        # Création de la commande
+        # Création commande
         order = Order.objects.create(
             user=request.user,
             address=address,
-            delivery=delivery,
+            delivery=None,  # gérant s’occupe de la livraison
             items=cart.items,
             subtotal=subtotal,
             delivery_fee=delivery_fee,
             total=total,
             status='pending'
         )
+        for article_id, item in cart.items.items():
+            article = get_object_or_404(Article, id=article_id)
+
+            OrderItem.objects.create(
+                order=order,
+                article=article,
+                quantity=int(item.get('qty', 1)),
+                price=Decimal(item['price'])
+            )
 
         # Vider le panier
         cart.items = {}
         cart.save()
 
         messages.success(request, "Commande créée avec succès.")
-        return redirect('payment', pk=order.pk)  # redirige vers paiement
+        return redirect('payment', pk=order.pk)
 
-    # Context pour GET
     context = {
         'cart': cart,
         'cart_items': cart_items,
@@ -92,10 +117,8 @@ def checkout_view(request):
         'delivery_fee': delivery_fee,
         'discount': discount,
         'total': total,
-        'deliveries': deliveries,
         'addresses': addresses,
     }
-
     return render(request, 'orders/checkout.html', context)
 
 @login_required

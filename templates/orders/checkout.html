@@ -3,38 +3,33 @@
 {% block title %}Checkout | FasoStore{% endblock %}
 
 {% block content %}
-<h2>Checkout</h2>
+<h2 class="mb-4">Finaliser la commande</h2>
 
 <div class="row">
 
-    <!-- COLONNE GAUCHE : Sélection adresse & livraison -->
+    <!-- COLONNE GAUCHE : Sélection adresse et coupon -->
     <div class="col-md-6">
-        <h5>Vos adresses</h5>
         <form method="post">
             {% csrf_token %}
 
             <!-- Adresses -->
-            <select name="address" class="form-select mb-3" required>
-                {% for addr in addresses %}
-                <option value="{{ addr.pk }}">
-                    {{ addr.address }}, {{ addr.city }}, {{ addr.country }}
-                </option>
-                {% endfor %}
-            </select>
-
-            <!-- Méthodes de livraison -->
-            <h5>Méthode de livraison</h5>
-            <select name="delivery" class="form-select mb-3" required>
-                {% for d in deliveries %}
-                <option value="{{ d.pk }}">
-                    {{ d.name }} — {{ d.price|floatformat:0 }} FCFA
-                </option>
-                {% endfor %}
-            </select>
+            <h5>Votre adresse de livraison</h5>
+            {% if addresses %}
+                <select name="address" class="form-select mb-3" required>
+                    {% for addr in addresses %}
+                        <option value="{{ addr.pk }}">
+                            {{ addr.address }}, {{ addr.city }}, {{ addr.country }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <a href="{% url 'addresses' %}" class="btn btn-link btn-sm mb-3">Ajouter une nouvelle adresse</a>
+            {% else %}
+                <p class="text-danger">Vous n'avez pas encore d'adresse. <a href="{% url 'addresses' %}">Ajouter une adresse</a></p>
+            {% endif %}
 
             <!-- Coupon (optionnel) -->
-            <h5>Coupon</h5>
-            <input type="text" name="coupon" class="form-control mb-3" placeholder="Code promo">
+            <h5>Code promo (facultatif)</h5>
+            <input type="text" name="coupon" class="form-control mb-3" placeholder="Entrez votre code promo">
 
             <button type="submit" class="btn btn-warning w-100">
                 Passer la commande
@@ -46,7 +41,7 @@
     <div class="col-md-6">
         <h5>Résumé du panier</h5>
         <ul class="list-group mb-3">
-            {% for item in cart.items.values %}
+            {% for item in cart_items %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 {{ item.name }} x {{ item.quantity }}
                 <span>{{ item.total_price|floatformat:0 }} FCFA</span>
@@ -55,9 +50,10 @@
         </ul>
 
         <p class="mb-1">Sous-total : <strong>{{ subtotal|floatformat:0 }} FCFA</strong></p>
-        <p class="mb-1">Frais de livraison : <strong>{{ delivery_fee|default:0|floatformat:0 }} FCFA</strong></p>
-        <p class="mb-1">Remise : <strong>{{ discount|default:0|floatformat:0 }} FCFA</strong></p>
-        <p class="fw-bold">Total : <strong>{{ subtotal|add:delivery_fee|floatformat:0|add:"-"|add:discount|floatformat:0 }} FCFA</strong></p>
+        {% if discount > 0 %}
+            <p class="mb-1">Remise : <strong>{{ discount|floatformat:0 }} FCFA</strong></p>
+        {% endif %}
+        <p class="fw-bold">Total à payer : <strong>{{ total|floatformat:0 }} FCFA</strong></p>
     </div>
 
 </div>

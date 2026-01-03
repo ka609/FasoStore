@@ -22,11 +22,11 @@
         </div>
     </div>
 
-    <!-- Profil -->
+    <!-- Profil + Adresse -->
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-header fw-bold">
-                Informations personnelles
+                Informations personnelles et adresse
             </div>
             <div class="card-body">
 
@@ -34,9 +34,28 @@
                     {% csrf_token %}
                     {{ form.non_field_errors }}
 
+                    <!-- Téléphone -->
                     <div class="mb-3">
                         {{ form.phone.label_tag }}
                         {{ form.phone }}
+                    </div>
+
+                    <!-- Adresse -->
+                    <div class="mb-3">
+                        <label for="id_country" class="form-label">Pays</label>
+                        <input type="text" name="country" id="id_country" class="form-control"
+                               value="{{ user_address.country|default:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_city" class="form-label">Ville</label>
+                        <input type="text" name="city" id="id_city" class="form-control"
+                               value="{{ user_address.city|default:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_address" class="form-label">Adresse complète</label>
+                        <textarea name="address" id="id_address" class="form-control" rows="3">{{ user_address.address|default:'' }}</textarea>
                     </div>
 
                     <button class="btn btn-primary w-100">

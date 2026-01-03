@@ -93,6 +93,7 @@
 
 .seemore_bt a {
     background: #222;
+    text-decoration: none;
     color: #fff;
     padding: 8px 18px;
     border-radius: 20px;
@@ -101,4 +102,20 @@
 
 .seemore_bt a:hover {
     background: #f26522;
+    text-decoration: none;
+}
+/* ================= BARRE DES CATÉGORIES ================= */
+
+.nav-link {
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+    color: #ffc107 !important;
+}
+
+.nav-link.active,
+.nav-link.border-bottom {
+    color: #ffc107 !important;
+    font-weight: 600;
 }

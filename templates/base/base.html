@@ -18,43 +18,62 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .navbar {
-            background-color: #f1f3f5;
-        }
-        .navbar-brand span {
-            color: #ffc107;
-            font-weight: 700;
-        }
-        .icon-btn {
-            position: relative;
-            color: #495057;
-            font-size: 1.2rem;
-        }
-        .icon-btn:hover {
-            color: #000;
-        }
-        .icon-btn .badge {
-            position: absolute;
-            top: -6px;
-            right: -10px;
-            font-size: 0.65rem;
-        }
-        footer {
-            background: #212529;
-            color: #adb5bd;
-        }
-        footer a {
-            color: #adb5bd;
-            text-decoration: none;
-        }
-        footer a:hover {
-            color: #fff;
-        }
-    </style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    /* NAVBAR = même couleur que footer */
+    .navbar {
+        background-color: #212529;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.6rem;
+    }
+
+    .navbar-brand span {
+        color: #ffc107;
+        font-weight: 700;
+    }
+
+    .navbar .nav-link,
+    .navbar .icon-btn {
+        color: #adb5bd;
+    }
+
+    .navbar .icon-btn:hover {
+        color: #fff;
+    }
+
+    .icon-btn {
+        position: relative;
+        font-size: 1.3rem;
+    }
+
+    .icon-btn .badge {
+        position: absolute;
+        top: -6px;
+        right: -10px;
+        font-size: 0.65rem;
+    }
+
+    footer {
+        background: #212529;
+        color: #adb5bd;
+    }
+
+    footer a {
+        color: #adb5bd;
+        text-decoration: none;
+    }
+
+    footer a:hover {
+        color: #fff;
+    }
+</style>
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -77,8 +96,110 @@
         <!-- Navbar content -->
         <div class="collapse navbar-collapse" id="mainNavbar">
 
-            <!-- Search -->
-            <form class="d-flex mx-auto w-50" method="get" action="{% url 'home' %}">
+            <!-- Right icons -->
+            <div class="d-flex align-items-center gap-3 ms-auto">
+
+    <!-- Cart : toujours visible -->
+    <a href="{% url 'cart' %}" class="icon-btn">
+        <i class="fas fa-shopping-cart"></i>
+        {% if request.user.is_authenticated and request.user.cart %}
+            <span class="badge bg-warning text-dark">
+                {{ request.user.cart.items|length }}
+            </span>
+        {% endif %}
+    </a>
+
+    {% if user.is_authenticated %}
+
+        <!-- Notifications -->
+        <a href="{% url 'notifications' %}" class="icon-btn">
+            <i class="fas fa-bell"></i>
+            {% if notifications_count %}
+                <span class="badge bg-danger">{{ notifications_count }}</span>
+            {% endif %}
+        </a>
+
+        <!-- Profil -->
+        <div class="dropdown">
+            <a
+                href="#"
+                class="icon-btn dropdown-toggle"
+                data-bs-toggle="dropdown"
+            >
+                <i class="fas fa-user-circle"></i>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+
+                <li>
+                    <a class="dropdown-item" href="{% url 'profile' %}">
+                        <i class="fas fa-user me-2"></i> Mon profil
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item" href="{% url 'orders_list' %}">
+                        <i class="fas fa-box me-2"></i> Mes commandes
+                    </a>
+                </li>
+
+                <li><hr class="dropdown-divider"></li>
+
+                <li>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+                        </button>
+                    </form>
+                </li>
+
+            </ul>
+        </div>
+
+    {% else %}
+
+        <!-- Connexion -->
+        <a href="{% url 'login' %}" class="btn btn-outline-warning">
+            <i class="fas fa-sign-in-alt me-1"></i>
+        </a>
+
+    {% endif %}
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<!-- ================= BARRE DES CATÉGORIES ================= -->
+<div class="bg-white border-bottom shadow-sm mt-3">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3 py-2 flex-wrap">
+
+            <!-- MENU DÉROULANT CATÉGORIES -->
+            <div class="dropdown">
+                <button
+                    class="btn btn-warning dropdown-toggle fw-semibold"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                >
+                    <i class="fas fa-list me-2"></i> Catégories
+                </button>
+
+                <ul class="dropdown-menu shadow-sm">
+                    {% for cat in categories %}
+                    <li>
+                        <a class="dropdown-item"
+                           href="{% url 'category' cat.slug %}">
+                            {{ cat.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- RECHERCHE (déplacée ici) -->
+            <form class="d-flex flex-grow-1" method="get" action="{% url 'home' %}">
                 <input
                     class="form-control me-2"
                     type="search"
@@ -86,85 +207,15 @@
                     name="q"
                     value="{{ request.GET.q }}"
                 >
-                <button class="btn btn-warning" type="submit">
+                <button class="btn btn-outline-warning" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
 
-            <!-- Right icons -->
-            <div class="d-flex align-items-center gap-3">
-
-                <!-- Cart -->
-                <a href="{% url 'cart' %}" class="icon-btn">
-                    <i class="fas fa-shopping-cart"></i>
-                    {% if request.user.is_authenticated and request.user.cart %}
-                        <span class="badge bg-warning text-dark">
-                            {{ request.user.cart.items|length }}
-                        </span>
-                    {% endif %}
-                </a>
-
-                {% if user.is_authenticated %}
-
-                    <!-- Notifications -->
-                    <a href="{% url 'notifications' %}" class="icon-btn">
-                        <i class="fas fa-bell"></i>
-                        {% if notifications_count %}
-                            <span class="badge bg-danger">{{ notifications_count }}</span>
-                        {% endif %}
-                    </a>
-
-                    <!-- User dropdown -->
-                    <div class="dropdown">
-                        <a
-                            href="#"
-                            class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle"
-                            data-bs-toggle="dropdown"
-                        >
-                            <i class="fas fa-user-circle fs-5"></i>
-                        </a>
-
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-
-                            <li>
-                                <a class="dropdown-item" href="{% url 'profile' %}">
-                                    <i class="fas fa-user me-2"></i> Mon profil
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item" href="{% url 'orders_list' %}">
-                                    <i class="fas fa-box me-2"></i> Mes commandes
-                                </a>
-                            </li>
-
-                            <li><hr class="dropdown-divider"></li>
-
-                            <!-- LOGOUT CORRIGÉ -->
-                            <li>
-                                <form method="post" action="{% url 'logout' %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
-                                    </button>
-                                </form>
-                            </li>
-
-                        </ul>
-                    </div>
-
-                {% else %}
-
-                    <!-- Login -->
-                    <a href="{% url 'login' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-sign-in-alt me-1"></i> Connexion
-                    </a>
-
-                {% endif %}
-            </div>
         </div>
     </div>
-</nav>
+</div>
+
 
 <!-- ================= MAIN CONTENT ================= -->
 <main class="container my-5">

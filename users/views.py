@@ -5,27 +5,55 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from orders.models import Cart
-
 from .models import UserProfile, Address, Notification
 from .forms import UserProfileForm, AddressForm
 
 @login_required
 def profile_view(request):
+    # Récupération ou création du profil
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
+    # Récupération de la première adresse si elle existe
+    address = request.user.addresses.first()
+
     if request.method == "POST":
+        # Formulaire profil
         form = UserProfileForm(request.POST, instance=profile)
+
+        # Champs adresse depuis POST
+        country = request.POST.get('country')
+        city = request.POST.get('city')
+        addr_text = request.POST.get('address')
+
         if form.is_valid():
             form.save()
-            messages.success(request, "Profil mis à jour avec succès.")
+
+            # Sauvegarde ou création de l'adresse
+            if address:
+                address.country = country
+                address.city = city
+                address.address = addr_text
+                address.save()
+            else:
+                Address.objects.create(
+                    user=request.user,
+                    country=country,
+                    city=city,
+                    address=addr_text
+                )
+
+            messages.success(request, "Profil et adresse mis à jour avec succès.")
             return redirect('profile')
     else:
         form = UserProfileForm(instance=profile)
 
-    return render(request, 'users/profile.html', {
+    context = {
         'form': form,
         'profile': profile,
-    })
+        'user_address': address,  # utilisé pour pré-remplir les champs adresse
+    }
+
+    return render(request, 'users/profile.html', context)
 
 @login_required
 def address_list_create(request):
